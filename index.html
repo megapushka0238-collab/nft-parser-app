@@ -187,6 +187,14 @@ body{
 .confirm-btn:active{transform:scale(.97);opacity:.9}
 .confirm-btn svg{width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
+/* Country filter pills */
+.cfilt{
+  flex:1;padding:8px 4px;border:1.5px solid var(--border);border-radius:var(--rsm);
+  background:var(--card);color:var(--text);font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .15s;text-align:center;
+}
+.cfilt.active{border-color:var(--accent);background:rgba(139,124,247,.15);color:var(--accent)}
+
 /* Confirm info card */
 .confirm-info{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);
@@ -391,6 +399,24 @@ body{
       <div class="ci-label">Фильтр</div>
       <div class="ci-value" id="confirm-filter">—</div>
     </div>
+  </div>
+
+  <!-- Country sub-filter (visible for girls/cooldown/random) -->
+  <div id="confirm-country-wrap" style="display:none;margin:12px 16px 0">
+    <div style="font-size:13px;color:var(--hint);margin-bottom:6px">Национальность</div>
+    <div style="display:flex;gap:6px">
+      <button class="cfilt active" data-country="all" onclick="setCountry(this)">🌍 Все</button>
+      <button class="cfilt" data-country="cn" onclick="setCountry(this)">🇨🇳 Китай</button>
+      <button class="cfilt" data-country="ru" onclick="setCountry(this)">🇷🇺 Россия</button>
+    </div>
+  </div>
+
+  <!-- "Never transferred" toggle (visible for random) -->
+  <div id="confirm-orig-wrap" style="display:none;margin:12px 16px 0">
+    <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer">
+      <input type="checkbox" id="confirm-orig-cb" style="width:18px;height:18px;accent-color:var(--accent)">
+      <span>🆕 Только никогда не передавались</span>
+    </label>
   </div>
 
   <div class="confirm-wrap">
@@ -655,6 +681,27 @@ function deepLink(param){
   }
 }
 
+// Country filter state
+let selectedCountry='all';
+function setCountry(btn){
+  document.querySelectorAll('.cfilt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedCountry=btn.dataset.country;
+  if(tg)tg.HapticFeedback?.selectionChanged();
+}
+
+// Actions that support country sub-filter
+const COUNTRY_ACTIONS=new Set(['girls','cd_free','cd_soon','cd_active','random']);
+// Actions that support "never transferred"
+const ORIG_ACTIONS=new Set(['random']);
+
+function _resetConfirmOptions(){
+  selectedCountry='all';
+  document.querySelectorAll('.cfilt').forEach(b=>{b.classList.toggle('active',b.dataset.country==='all')});
+  const origCb=document.getElementById('confirm-orig-cb');
+  if(origCb)origCb.checked=false;
+}
+
 // === CONFIRM FLOW ===
 function confirmAction(action){
   // Random doesn't need a collection
@@ -664,21 +711,24 @@ function confirmAction(action){
     document.getElementById('confirm-desc').textContent=ACTION_DESCS[action]||'';
     document.getElementById('confirm-gift').textContent='Все коллекции';
     document.getElementById('confirm-filter').textContent=ACTION_LABELS[action]||action;
-    document.querySelectorAll('.subpg').forEach(s=>{if(s.id!=='sub-confirm')s.classList.remove('open')});
-    openSub('confirm');
-    if(tg)tg.HapticFeedback?.impactOccurred('medium');
-    return;
+  } else {
+    if(!selectedGift){
+      showToast('⚠ Сначала выбери коллекцию');
+      if(tg)tg.HapticFeedback?.notificationOccurred('warning');
+      return;
+    }
+    pendingAction=action;
+    document.getElementById('confirm-title').textContent=ACTION_LABELS[action]||action;
+    document.getElementById('confirm-desc').textContent=ACTION_DESCS[action]||'';
+    document.getElementById('confirm-gift').textContent=selectedGift;
+    document.getElementById('confirm-filter').textContent=ACTION_LABELS[action]||action;
   }
-  if(!selectedGift){
-    showToast('⚠ Сначала выбери коллекцию');
-    if(tg)tg.HapticFeedback?.notificationOccurred('warning');
-    return;
-  }
-  pendingAction=action;
-  document.getElementById('confirm-title').textContent=ACTION_LABELS[action]||action;
-  document.getElementById('confirm-desc').textContent=ACTION_DESCS[action]||'';
-  document.getElementById('confirm-gift').textContent=selectedGift;
-  document.getElementById('confirm-filter').textContent=ACTION_LABELS[action]||action;
+
+  // Show/hide country filter and original toggle
+  _resetConfirmOptions();
+  document.getElementById('confirm-country-wrap').style.display=COUNTRY_ACTIONS.has(action)?'':'none';
+  document.getElementById('confirm-orig-wrap').style.display=ORIG_ACTIONS.has(action)?'':'none';
+
   document.querySelectorAll('.subpg').forEach(s=>{if(s.id!=='sub-confirm')s.classList.remove('open')});
   openSub('confirm');
   if(tg)tg.HapticFeedback?.impactOccurred('medium');
@@ -687,13 +737,24 @@ function confirmAction(action){
 function doConfirmedAction(){
   if(!pendingAction)return;
   if(tg)tg.HapticFeedback?.impactOccurred('heavy');
+
+  // Build action suffix: country + orig
+  let suffix='';
+  if(COUNTRY_ACTIONS.has(pendingAction)&&selectedCountry!=='all'){
+    suffix+=selectedCountry; // 'cn' or 'ru'
+  }
+  const origCb=document.getElementById('confirm-orig-cb');
+  if(ORIG_ACTIONS.has(pendingAction)&&origCb&&origCb.checked){
+    suffix+='orig';
+  }
+
+  const safeAction=pendingAction.replace(/_/g,'')+suffix;
+
   if(pendingAction==='random'){
-    deepLink('random');
+    deepLink(safeAction);
     return;
   }
   if(!selectedGift)return;
-  // action__GiftApiName (underscores in action replaced: market_chinese → marketchinese)
-  const safeAction=pendingAction.replace(/_/g,'');
   deepLink(safeAction+'__'+toApiName(selectedGift));
 }
 
