@@ -674,14 +674,16 @@ function getBotUsername(){
 }
 function toApiName(n){return n.replace(/[\s\-\u2019']/g,'');}
 function deepLink(param){
+  if(!tg)return;
+  const isDesktop=['tdesktop','macos','web','weba'].includes(tg.platform);
+  if(isDesktop){
+    tg.sendData(JSON.stringify({deeplink:param}));
+    return;
+  }
   const bot=getBotUsername();
   const url='https://t.me/'+bot+'?start='+param;
-  if(tg){
-    try{tg.openTelegramLink(url)}catch(e){window.open(url,'_blank')}
-    setTimeout(()=>{try{tg.close()}catch(e){}},500);
-  } else {
-    window.open(url,'_blank');
-  }
+  try{tg.openTelegramLink(url)}catch(e){window.open(url,'_blank')}
+  setTimeout(()=>{try{tg.close()}catch(e){}},500);
 }
 
 // Country filter state
