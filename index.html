@@ -675,15 +675,11 @@ function getBotUsername(){
 function toApiName(n){return n.replace(/[\s\-\u2019']/g,'');}
 function deepLink(param){
   if(!tg)return;
-  const isDesktop=['tdesktop','macos','web','weba'].includes(tg.platform);
-  if(isDesktop){
-    tg.sendData(JSON.stringify({deeplink:param}));
-    return;
-  }
-  const bot=getBotUsername();
-  const url='https://t.me/'+bot+'?start='+param;
-  try{tg.openTelegramLink(url)}catch(e){window.open(url,'_blank')}
-  setTimeout(()=>{try{tg.close()}catch(e){}},500);
+  // sendData — самый надёжный метод на всех платформах:
+  // данные идут напрямую боту через Telegram API, без ссылок/редиректов.
+  // Работает на ПК, телефоне, веб — везде одинаково.
+  // Автоматически отправляет тому боту, который открыл мини апп (зеркала ОК).
+  tg.sendData(JSON.stringify({deeplink:param}));
 }
 
 // Country filter state
