@@ -675,9 +675,12 @@ function getBotUsername(){
 function toApiName(n){return n.replace(/[\s\-\u2019']/g,'');}
 function deepLink(param){
   const bot=getBotUsername();
+  const url='https://t.me/'+bot+'?start='+param;
   if(tg){
-    tg.openTelegramLink('https://t.me/'+bot+'?start='+param);
-    tg.close();
+    try{tg.openTelegramLink(url)}catch(e){window.open(url,'_blank')}
+    setTimeout(()=>{try{tg.close()}catch(e){}},500);
+  } else {
+    window.open(url,'_blank');
   }
 }
 
