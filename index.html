@@ -43,7 +43,7 @@ body{
 .pg.on{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 
-/* Sub-pages (cooldown/market) — slide over */
+/* Sub-pages — slide over */
 .subpg{
   position:absolute;top:0;left:0;right:0;bottom:0;
   background:var(--bg);z-index:50;
@@ -174,6 +174,29 @@ body{
 .cdlbl{font-size:12px;font-weight:600;color:var(--t2)}
 .cdsub{font-size:10px;color:var(--t3);margin-top:2px}
 
+/* Confirm button */
+.confirm-wrap{margin-top:24px;text-align:center}
+.confirm-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:16px;
+  background:linear-gradient(135deg,var(--accent),#6c5ce7);
+  border:none;border-radius:var(--rmd);cursor:pointer;
+  font-family:inherit;font-size:16px;font-weight:700;color:#fff;
+  transition:all .15s;box-shadow:0 4px 20px rgba(139,124,247,.3);
+}
+.confirm-btn:active{transform:scale(.97);opacity:.9}
+.confirm-btn svg{width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* Confirm info card */
+.confirm-info{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);
+  padding:20px;margin-top:16px;
+}
+.ci-row{display:flex;align-items:center;gap:10px;padding:8px 0}
+.ci-row:not(:last-child){border-bottom:1px solid var(--border)}
+.ci-label{font-size:12px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;width:90px;flex-shrink:0}
+.ci-value{font-size:14px;font-weight:600;color:var(--t1)}
+
 /* Profile */
 .prof-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);
@@ -268,14 +291,14 @@ body{
     <div class="infobox">
       <div class="ibt"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Как это работает</div>
       <div class="irow"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><span>Выбери коллекцию подарка из списка</span></div>
-      <div class="irow"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><span>Нажми нужный фильтр — бот парсит через API</span></div>
-      <div class="irow"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><span>Результаты приходят в чат с ботом</span></div>
+      <div class="irow"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><span>Нажми нужный фильтр — откроется подтверждение</span></div>
+      <div class="irow"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><span>Нажми «Начать парсинг» — результаты придут в чат</span></div>
     </div>
   </div>
 
-  <!-- ====== PARSER (clean — only collection + search filters + reset) ====== -->
+  <!-- ====== PARSER ====== -->
   <div class="pg" id="pg-parser">
-    <div class="hdr"><h1>Парсинг</h1><p>Выбери коллекцию, затем нажми нужный фильтр. Результат — в чат с ботом.</p></div>
+    <div class="hdr"><h1>Парсинг</h1><p>Выбери коллекцию, затем нажми нужный фильтр.</p></div>
 
     <div class="cpicker">
       <div class="csearch">
@@ -289,35 +312,35 @@ body{
     <div class="stitle"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Поиск по типу владельца</div>
 
     <div class="action-row">
-      <div class="acard" onclick="act('chinese')">
+      <div class="acard" onclick="confirmAction('chinese')">
         <div class="aico v1"><svg viewBox="0 0 24 24"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 0 1 6.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg></div>
-        <div class="atxt"><div class="at">Найти китайцев</div><div class="ad">Владельцы с иероглифами в имени или био — потенциальные продавцы</div></div>
+        <div class="atxt"><div class="at">Найти китайцев</div><div class="ad">Владельцы с иероглифами в имени — потенциальные продавцы</div></div>
         <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
-      <div class="acard" onclick="act('russian')">
+      <div class="acard" onclick="confirmAction('russian')">
         <div class="aico v5"><svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h6m-2 18V3m0 0h6a4 4 0 0 1 0 8h-6m6 0 4 10"/></svg></div>
-        <div class="atxt"><div class="at">Найти русских</div><div class="ad">Кириллица в имени или био — русскоязычные владельцы NFT</div></div>
+        <div class="atxt"><div class="at">Найти русских</div><div class="ad">Кириллица в имени — русскоязычные владельцы NFT</div></div>
         <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
-      <div class="acard" onclick="act('girls')">
+      <div class="acard" onclick="confirmAction('girls')">
         <div class="aico v4"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M12 13v8"/><path d="M9 18h6"/></svg></div>
-        <div class="atxt"><div class="at">AI-поиск девушек</div><div class="ad">Нейросеть проверяет фото профиля — находит женские аккаунты</div></div>
+        <div class="atxt"><div class="at">AI-поиск девушек</div><div class="ad">Нейросеть проверяет имя — находит женские аккаунты</div></div>
         <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
-      <div class="acard" onclick="act('random')">
+      <div class="acard" onclick="confirmAction('random')">
         <div class="aico v2"><svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg></div>
-        <div class="atxt"><div class="at">Случайный поиск</div><div class="ad">Выдаёт 50 / 100 / 200 случайных владельцев из коллекции</div></div>
+        <div class="atxt"><div class="at">Случайный поиск</div><div class="ad">Случайные владельцы из коллекции</div></div>
         <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
-      <div class="acard" onclick="act('original')">
+      <div class="acard" onclick="confirmAction('original')">
         <div class="aico v6"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-        <div class="atxt"><div class="at">Никогда не передавались</div><div class="ad">Подарки которые всегда были у одного владельца — оригинальные</div></div>
+        <div class="atxt"><div class="at">Никогда не передавались</div><div class="ad">Подарки которые всегда были у одного владельца</div></div>
         <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
     </div>
 
     <div class="stitle" style="margin-top:24px"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Управление</div>
-    <div class="acard" onclick="act('reset_viewed')">
+    <div class="acard" onclick="sendAction('reset_viewed')">
       <div class="aico v7"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div>
       <div class="atxt"><div class="at">Сбросить просмотренных</div><div class="ad">Очистить историю — повторный парсинг покажет всех заново</div></div>
       <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
@@ -338,15 +361,10 @@ body{
       <div class="pstat"><div class="pv" id="p-scanned">0</div><div class="pl">Обработано</div></div>
     </div>
 
-    <div class="stitle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Настройки</div>
+    <div class="stitle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Управление</div>
 
     <div class="action-row">
-      <div class="acard" onclick="act('settings')">
-        <div class="aico v8"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-        <div class="atxt"><div class="at">Прокси и лимиты</div><div class="ad">Настройка пула прокси, скорости парсинга, ротации</div></div>
-        <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </div>
-      <div class="acard" onclick="act('reset_viewed')">
+      <div class="acard" onclick="sendAction('reset_viewed')">
         <div class="aico v7"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div>
         <div class="atxt"><div class="at">Сбросить просмотренных</div><div class="ad">Удалить всю историю парсинга и начать с чистого листа</div></div>
         <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
@@ -356,6 +374,40 @@ body{
 
 </div><!-- /scroll -->
 
+<!-- ====== SUB-PAGE: CONFIRM ====== -->
+<div class="subpg" id="sub-confirm">
+  <div class="back-btn" onclick="closeSub()">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Назад
+  </div>
+  <div class="hdr" style="padding-top:4px"><h1 id="confirm-title">Подтверждение</h1><p id="confirm-desc">Проверьте настройки и запустите парсинг</p></div>
+
+  <div class="confirm-info">
+    <div class="ci-row">
+      <div class="ci-label">Коллекция</div>
+      <div class="ci-value" id="confirm-gift">—</div>
+    </div>
+    <div class="ci-row">
+      <div class="ci-label">Фильтр</div>
+      <div class="ci-value" id="confirm-filter">—</div>
+    </div>
+  </div>
+
+  <div class="confirm-wrap">
+    <button class="confirm-btn" id="confirm-go-btn" onclick="doConfirmedAction()">
+      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Начать парсинг
+    </button>
+  </div>
+
+  <div class="infobox" style="margin-top:16px">
+    <div class="ibt"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Что произойдёт</div>
+    <div class="irow"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><span>Мини апп закроется</span></div>
+    <div class="irow"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><span>Бот начнёт парсинг через API</span></div>
+    <div class="irow"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><span>Результаты придут прямо в чат</span></div>
+  </div>
+</div>
+
 <!-- ====== SUB-PAGE: COOLDOWN ====== -->
 <div class="subpg" id="sub-cooldown">
   <div class="back-btn" onclick="closeSub()">
@@ -364,7 +416,6 @@ body{
   </div>
   <div class="hdr" style="padding-top:4px"><h1>Кулдаун</h1><p>Поиск подарков по статусу кулдауна после улучшения или передачи</p></div>
 
-  <!-- Collection picker in sub-page too -->
   <div class="cpicker" style="margin-top:14px">
     <div class="csearch">
       <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
@@ -377,15 +428,15 @@ body{
   <div class="stitle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Выберите фильтр</div>
 
   <div class="cd-grid">
-    <div class="cd-card" onclick="act('cd_free')">
+    <div class="cd-card" onclick="confirmAction('cd_free')">
       <div class="cdico" style="background:rgba(52,211,153,.1)"><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:#34d399;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="cdlbl">Без КД</div><div class="cdsub">Можно передать</div>
     </div>
-    <div class="cd-card" onclick="act('cd_soon')">
+    <div class="cd-card" onclick="confirmAction('cd_soon')">
       <div class="cdico" style="background:rgba(251,191,36,.1)"><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:#fbbf24;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
       <div class="cdlbl">Скоро</div><div class="cdsub">1-2 дня</div>
     </div>
-    <div class="cd-card" onclick="act('cd_active')">
+    <div class="cd-card" onclick="confirmAction('cd_active')">
       <div class="cdico" style="background:rgba(239,68,68,.1)"><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:#f87171;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
       <div class="cdlbl">На КД</div><div class="cdsub">Ждём снятия</div>
     </div>
@@ -407,7 +458,6 @@ body{
   </div>
   <div class="hdr" style="padding-top:4px"><h1>Маркет</h1><p>Подарки выставленные на внутреннем маркете Telegram за звёзды</p></div>
 
-  <!-- Collection picker in sub-page too -->
   <div class="cpicker" style="margin-top:14px">
     <div class="csearch">
       <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
@@ -420,19 +470,19 @@ body{
   <div class="stitle"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Фильтр маркета</div>
 
   <div class="action-row">
-    <div class="acard" onclick="act('market_chinese')">
+    <div class="acard" onclick="confirmAction('market_chinese')">
       <div class="aico v1"><svg viewBox="0 0 24 24"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 0 1 6.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg></div>
-      <div class="atxt"><div class="at">Китайцы на маркете</div><div class="ad">Подарки от китайцев, выставленные за ⭐ звёзды</div></div>
+      <div class="atxt"><div class="at">Китайцы на маркете</div><div class="ad">Подарки от китайцев за ⭐ звёзды</div></div>
       <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
     </div>
-    <div class="acard" onclick="act('market_russian')">
+    <div class="acard" onclick="confirmAction('market_russian')">
       <div class="aico v5"><svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h6m-2 18V3m0 0h6a4 4 0 0 1 0 8h-6m6 0 4 10"/></svg></div>
-      <div class="atxt"><div class="at">Русские на маркете</div><div class="ad">Русские владельцы, продающие подарки за ⭐ звёзды</div></div>
+      <div class="atxt"><div class="at">Русские на маркете</div><div class="ad">Русские, продающие подарки за ⭐ звёзды</div></div>
       <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
     </div>
-    <div class="acard" onclick="act('market_all')">
+    <div class="acard" onclick="confirmAction('market_all')">
       <div class="aico v2"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
-      <div class="atxt"><div class="at">Все лоты на маркете</div><div class="ad">Все подарки на продаже на внутреннем маркете Telegram</div></div>
+      <div class="atxt"><div class="at">Все лоты на маркете</div><div class="ad">Все подарки на продаже внутри Telegram</div></div>
       <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
     </div>
   </div>
@@ -468,6 +518,35 @@ if(tg){tg.ready();tg.expand();tg.setHeaderColor('#06060c');tg.setBackgroundColor
 const GIFTS=["Artisan Brick","Astral Shard","B-Day Candle","Berry Box","Big Year","Bling Binky","Bonded Ring","Bow Tie","Bunny Muffin","Candy Cane","Clover Pin","Cookie Heart","Crystal Ball","Cupid Charm","Desk Calendar","Diamond Ring","Durov's Cap","Easter Egg","Electric Skull","Eternal Candle","Eternal Rose","Evil Eye","Faith Amulet","Flying Broom","Fresh Socks","Gem Signet","Genie Lamp","Ginger Cookie","Hanging Star","Happy Brownie","Heart Locket","Heroic Helmet","Hex Pot","Holiday Drink","Homemade Cake","Hypno Lollipop","Ice Cream","Input Key","Instant Ramen","Ion Gem","Ionic Dryer","Jack in the Box","Jelly Bunny","Jester Hat","Jingle Bells","Jolly Chimp","Joyful Bundle","Khabib's Papakha","Kissed Frog","Light Sword","Lol Pop","Loot Bag","Love Candle","Love Potion","Low Rider","Lunar Snake","Lush Bouquet","Mad Pumpkin","Magic Potion","Mighty Arm","Mini Oscar","Money Pot","Moon Pendant","Mousse Cake","Nail Bracelet","Neko Helmet","Party Sparkler","Perfume Bottle","Pet Snake","Plush Pepe","Precious Peach","Pretty Posy","Record Player","Restless Jar","Sakura Flower","Santa Hat","Scared Cat","Sharp Tongue","Signet Ring","Skull Flower","Sky Stilettos","Sleigh Bell","Snake Box","Snoop Cigar","Snoop Dogg","Snow Globe","Snow Mittens","Spiced Wine","Spring Basket","Spy Agaric","Star Notepad","Stellar Rocket","Swag Bag","Swiss Watch","Tama Gadget","Top Hat","Toy Bear","Trapped Heart","Valentine Box","Vintage Cigar","Voodoo Doll","Westside Sign","Whip Cupcake","Winter Wreath","Witch Hat","Xmas Stocking"];
 
 let selectedGift=null;
+let pendingAction=null;
+
+const ACTION_LABELS={
+  chinese:'🇨🇳 Поиск китайцев',
+  russian:'🇷🇺 Поиск русских',
+  girls:'👩 AI-поиск девушек',
+  random:'🎲 Случайный поиск',
+  original:'🔗 Оригинальные владельцы',
+  market_chinese:'🇨🇳 Маркет: китайцы',
+  market_russian:'🇷🇺 Маркет: русские',
+  market_all:'🛒 Маркет: все лоты',
+  cd_free:'✅ Без кулдауна',
+  cd_soon:'⏳ Скоро снятие КД',
+  cd_active:'🔴 На кулдауне',
+};
+
+const ACTION_DESCS={
+  chinese:'Бот найдёт всех владельцев с китайскими иероглифами в имени',
+  russian:'Бот найдёт всех владельцев с кириллицей в имени',
+  girls:'AI проверит имена и определит женские аккаунты',
+  random:'Бот выдаст случайных владельцев из этой коллекции',
+  original:'Бот найдёт подарки которые никогда не передавались',
+  market_chinese:'Подарки от китайцев, выставленные за звёзды на маркете TG',
+  market_russian:'Подарки от русских, выставленные за звёзды на маркете TG',
+  market_all:'Все подарки на продаже на внутреннем маркете Telegram',
+  cd_free:'Подарки у которых кулдаун уже прошёл — можно передать',
+  cd_soon:'Подарки у которых кулдаун снимется через 1-2 дня',
+  cd_active:'Подарки которые сейчас на кулдауне',
+};
 
 // Main parser page gift list
 function renderGifts(filter=''){
@@ -487,9 +566,8 @@ function pickGift(name){
   selectedGift=selectedGift===name?null:name;
   updateSelLabel(document.getElementById('sel-label'));
   renderGifts(document.getElementById('gift-search').value);
-  // Sync sub-page pickers
   document.querySelectorAll('.sub-sel-label').forEach(l=>updateSelLabel(l));
-  document.querySelectorAll('.sub-gift-list').forEach(el=>renderSubGifts(el,el.closest('.subpg').querySelector('.sub-gift-search').value));
+  document.querySelectorAll('.sub-gift-list').forEach(el=>renderSubGifts(el,el.closest('.subpg').querySelector('.sub-gift-search')?.value||''));
   if(tg)tg.HapticFeedback?.impactOccurred('light');
 }
 
@@ -503,6 +581,7 @@ function pickGiftSub(name,listEl,labelEl,searchEl){
 }
 
 function updateSelLabel(el){
+  if(!el)return;
   if(selectedGift){el.textContent='✓ '+selectedGift;el.classList.remove('empty')}
   else{el.textContent='Подарок не выбран';el.classList.add('empty')}
 }
@@ -549,7 +628,6 @@ function go(name){
 function openSub(name){
   const el=document.getElementById('sub-'+name);
   if(el){el.classList.add('open');el.scrollTop=0;
-    // Re-render sub gift list to sync selection
     const listEl=el.querySelector('.sub-gift-list');
     const searchEl=el.querySelector('.sub-gift-search');
     if(listEl)renderSubGifts(listEl,searchEl?.value||'');
@@ -563,23 +641,41 @@ function closeSub(){
   if(tg)tg.HapticFeedback?.impactOccurred('light');
 }
 
-// === ACTIONS ===
-function act(action){
-  if(!selectedGift&&!['reset_viewed','settings'].includes(action)){
+// === CONFIRM FLOW ===
+function confirmAction(action){
+  if(!selectedGift){
     showToast('⚠ Сначала выбери коллекцию');
     if(tg)tg.HapticFeedback?.notificationOccurred('warning');
     return;
   }
-  if(tg){tg.HapticFeedback?.impactOccurred('medium');
-    tg.sendData(JSON.stringify({action,gift:selectedGift}))}
-  const labels={
-    chinese:'Поиск китайцев…',russian:'Поиск русских…',
-    girls:'AI-поиск девушек…',random:'Случайный поиск…',
-    original:'Оригинальные владельцы…',
-    market_chinese:'Маркет: китайцы…',market_russian:'Маркет: русские…',market_all:'Маркет: все лоты…',
-    cd_free:'Поиск без кулдауна…',cd_soon:'Скоро снятие…',cd_active:'На кулдауне…',
-    reset_viewed:'✓ Просмотренные сброшены',settings:'Настройки…',
-  };
+  pendingAction=action;
+  // Fill confirm page
+  document.getElementById('confirm-title').textContent=ACTION_LABELS[action]||action;
+  document.getElementById('confirm-desc').textContent=ACTION_DESCS[action]||'';
+  document.getElementById('confirm-gift').textContent=selectedGift;
+  document.getElementById('confirm-filter').textContent=ACTION_LABELS[action]||action;
+  // Close any open sub-page first, then open confirm
+  document.querySelectorAll('.subpg').forEach(s=>{if(s.id!=='sub-confirm')s.classList.remove('open')});
+  openSub('confirm');
+  if(tg)tg.HapticFeedback?.impactOccurred('medium');
+}
+
+function doConfirmedAction(){
+  if(!pendingAction||!selectedGift)return;
+  if(tg){
+    tg.HapticFeedback?.impactOccurred('heavy');
+    tg.sendData(JSON.stringify({action:pendingAction,gift:selectedGift}));
+  }
+  showToast('🚀 Парсинг запущен!');
+}
+
+// Direct send (no confirmation needed)
+function sendAction(action){
+  if(tg){
+    tg.HapticFeedback?.impactOccurred('medium');
+    tg.sendData(JSON.stringify({action,gift:selectedGift}));
+  }
+  const labels={reset_viewed:'✓ Просмотренные сброшены',settings:'Настройки…'};
   showToast(labels[action]||action);
 }
 
