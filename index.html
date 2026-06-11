@@ -641,42 +641,72 @@ function closeSub(){
   if(tg)tg.HapticFeedback?.impactOccurred('light');
 }
 
+// === DEEP LINK HELPERS ===
+function getBotUsername(){
+  const p=new URLSearchParams(window.location.search);
+  return p.get('bot')||'MamanMom67_bot';
+}
+function toApiName(n){return n.replace(/[\s\-\u2019']/g,'');}
+function deepLink(param){
+  const bot=getBotUsername();
+  if(tg){
+    tg.openTelegramLink('https://t.me/'+bot+'?start='+param);
+    tg.close();
+  }
+}
+
 // === CONFIRM FLOW ===
 function confirmAction(action){
+  // Random doesn't need a collection
+  if(action==='random'){
+    pendingAction=action;
+    document.getElementById('confirm-title').textContent=ACTION_LABELS[action]||action;
+    document.getElementById('confirm-desc').textContent=ACTION_DESCS[action]||'';
+    document.getElementById('confirm-gift').textContent='Все коллекции';
+    document.getElementById('confirm-filter').textContent=ACTION_LABELS[action]||action;
+    document.querySelectorAll('.subpg').forEach(s=>{if(s.id!=='sub-confirm')s.classList.remove('open')});
+    openSub('confirm');
+    if(tg)tg.HapticFeedback?.impactOccurred('medium');
+    return;
+  }
   if(!selectedGift){
     showToast('⚠ Сначала выбери коллекцию');
     if(tg)tg.HapticFeedback?.notificationOccurred('warning');
     return;
   }
   pendingAction=action;
-  // Fill confirm page
   document.getElementById('confirm-title').textContent=ACTION_LABELS[action]||action;
   document.getElementById('confirm-desc').textContent=ACTION_DESCS[action]||'';
   document.getElementById('confirm-gift').textContent=selectedGift;
   document.getElementById('confirm-filter').textContent=ACTION_LABELS[action]||action;
-  // Close any open sub-page first, then open confirm
   document.querySelectorAll('.subpg').forEach(s=>{if(s.id!=='sub-confirm')s.classList.remove('open')});
   openSub('confirm');
   if(tg)tg.HapticFeedback?.impactOccurred('medium');
 }
 
 function doConfirmedAction(){
-  if(!pendingAction||!selectedGift)return;
-  if(tg){
-    tg.HapticFeedback?.impactOccurred('heavy');
-    tg.sendData(JSON.stringify({action:pendingAction,gift:selectedGift}));
+  if(!pendingAction)return;
+  if(tg)tg.HapticFeedback?.impactOccurred('heavy');
+  if(pendingAction==='random'){
+    deepLink('random');
+    return;
   }
-  showToast('🚀 Парсинг запущен!');
+  if(!selectedGift)return;
+  // action__GiftApiName (underscores in action replaced: market_chinese → marketchinese)
+  const safeAction=pendingAction.replace(/_/g,'');
+  deepLink(safeAction+'__'+toApiName(selectedGift));
 }
 
 // Direct send (no confirmation needed)
 function sendAction(action){
-  if(tg){
-    tg.HapticFeedback?.impactOccurred('medium');
-    tg.sendData(JSON.stringify({action,gift:selectedGift}));
+  if(tg)tg.HapticFeedback?.impactOccurred('medium');
+  if(action==='reset_viewed'){
+    deepLink('reset_viewed');
+    return;
   }
-  const labels={reset_viewed:'✓ Просмотренные сброшены',settings:'Настройки…'};
-  showToast(labels[action]||action);
+  if(!selectedGift)return;
+  const safeAction=action.replace(/_/g,'');
+  deepLink(safeAction+'__'+toApiName(selectedGift));
 }
 
 let tt;
