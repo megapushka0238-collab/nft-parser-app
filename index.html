@@ -531,6 +531,14 @@ body{
     </label>
   </div>
 
+  <!-- "Any gift / all collections" toggle (visible for country search) -->
+  <div id="confirm-anygift-wrap" style="display:none;margin:12px 16px 0">
+    <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer">
+      <input type="checkbox" id="confirm-anygift-cb" style="width:18px;height:18px;accent-color:var(--accent)" onchange="onAnyGiftToggle()">
+      <span>🎲 Любой подарок — искать по всем коллекциям</span>
+    </label>
+  </div>
+
   <div class="confirm-wrap">
     <button class="confirm-btn" id="confirm-go-btn" onclick="doConfirmedAction()">
       <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -852,12 +860,24 @@ function setCountry(btn){
 const COUNTRY_ACTIONS=new Set(['girls','cd_free','cd_soon','cd_active','random']);
 // Actions that support "never transferred"
 const ORIG_ACTIONS=new Set(['random']);
+// Actions that support "any gift / all collections" random search
+const ANYGIFT_ACTIONS=new Set(['country']);
 
 function _resetConfirmOptions(){
   selectedCountry='all';
   document.querySelectorAll('.cfilt').forEach(b=>{b.classList.toggle('active',b.dataset.country==='all')});
   const origCb=document.getElementById('confirm-orig-cb');
   if(origCb)origCb.checked=false;
+  const anyCb=document.getElementById('confirm-anygift-cb');
+  if(anyCb)anyCb.checked=false;
+}
+
+// When "any gift" is toggled, show "all collections" instead of the gift name
+function onAnyGiftToggle(){
+  const anyCb=document.getElementById('confirm-anygift-cb');
+  const gEl=document.getElementById('confirm-gift');
+  if(!anyCb||!gEl)return;
+  gEl.textContent=anyCb.checked?'🎲 Все коллекции':(selectedGift||'—');
 }
 
 // === CONFIRM FLOW ===
@@ -870,7 +890,9 @@ function confirmAction(action){
     document.getElementById('confirm-gift').textContent='Все коллекции';
     document.getElementById('confirm-filter').textContent=ACTION_LABELS[action]||action;
   } else {
-    if(!selectedGift){
+    const baseAct=action.replace(/_[a-z]{2}$/,'').replace(/_/g,''); // country_in → country
+    const anyGiftOk=ANYGIFT_ACTIONS.has(baseAct);
+    if(!selectedGift && !anyGiftOk){
       showToast('⚠ Сначала выбери коллекцию');
       if(tg)tg.HapticFeedback?.notificationOccurred('warning');
       return;
@@ -878,14 +900,20 @@ function confirmAction(action){
     pendingAction=action;
     document.getElementById('confirm-title').textContent=ACTION_LABELS[action]||action;
     document.getElementById('confirm-desc').textContent=ACTION_DESCS[action]||'';
-    document.getElementById('confirm-gift').textContent=selectedGift;
+    document.getElementById('confirm-gift').textContent=selectedGift||'🎲 Все коллекции';
     document.getElementById('confirm-filter').textContent=ACTION_LABELS[action]||action;
   }
 
-  // Show/hide country filter and original toggle
+  // Show/hide country filter, original toggle, any-gift toggle
   _resetConfirmOptions();
+  const baseAct2=action.replace(/_[a-z]{2}$/,'').replace(/_/g,'');
   document.getElementById('confirm-country-wrap').style.display=COUNTRY_ACTIONS.has(action)?'':'none';
   document.getElementById('confirm-orig-wrap').style.display=ORIG_ACTIONS.has(action)?'':'none';
+  const anyWrap=document.getElementById('confirm-anygift-wrap');
+  if(anyWrap)anyWrap.style.display=ANYGIFT_ACTIONS.has(baseAct2)?'':'none';
+  // If no gift was selected but this action supports "any gift", pre-check it
+  const anyCb=document.getElementById('confirm-anygift-cb');
+  if(anyCb&&ANYGIFT_ACTIONS.has(baseAct2)&&!selectedGift){anyCb.checked=true;onAnyGiftToggle();}
 
   document.querySelectorAll('.subpg').forEach(s=>{if(s.id!=='sub-confirm')s.classList.remove('open')});
   openSub('confirm');
@@ -895,6 +923,17 @@ function confirmAction(action){
 function doConfirmedAction(){
   if(!pendingAction)return;
   if(tg)tg.HapticFeedback?.impactOccurred('heavy');
+
+  // "Any gift" (all collections) for country search → random scan by country.
+  // pendingAction вида country_in → берём код страны, шлём random+код.
+  const anyCb=document.getElementById('confirm-anygift-cb');
+  const baseAct=pendingAction.replace(/_[a-z]{2}$/,'').replace(/_/g,'');
+  if(anyCb&&anyCb.checked&&ANYGIFT_ACTIONS.has(baseAct)){
+    const m=pendingAction.match(/_([a-z]{2})$/);
+    const cc=(m&&m[1]!=='al')?m[1]:''; // country_all → пусто (все страны)
+    deepLink('random'+cc); // randomin / randomru / random
+    return;
+  }
 
   // Build action suffix: country + orig
   let suffix='';
