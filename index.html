@@ -342,6 +342,13 @@ body{
       </div>
     </div>
 
+    <div class="stitle" style="margin-top:24px"><svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>Комбо-поиск</div>
+    <div class="acard" onclick="openSub('combo')">
+      <div class="aico v4"><svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></div>
+      <div class="atxt"><div class="at">🎛 Несколько NFT + фильтры сразу</div><div class="ad">Выбери несколько коллекций и условий (девушки + страна + не передавались + маркет)</div></div>
+      <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </div>
+
     <div class="stitle" style="margin-top:24px"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Fragment (TON)</div>
     <div class="action-row">
       <div class="acard" onclick="sendAction('numbers')">
@@ -393,6 +400,69 @@ body{
   </div>
 
 </div><!-- /scroll -->
+
+<!-- ====== SUB-PAGE: COMBO ====== -->
+<div class="subpg" id="sub-combo">
+  <div class="back-btn" onclick="closeSub()">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Назад
+  </div>
+  <div class="hdr" style="padding-top:4px"><h1>🎛 Комбо-поиск</h1><p>Несколько NFT + несколько фильтров сразу (логика «И»)</p></div>
+
+  <div style="padding:0 16px;margin-top:8px">
+    <div style="font-size:13px;color:var(--hint);margin-bottom:6px">🎁 Коллекции (можно несколько, до 6)</div>
+    <div class="cpicker" style="margin:0">
+      <div class="csearch">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="combo-gift-search" placeholder="Поиск подарка…" autocomplete="off">
+      </div>
+      <div class="ctable" id="combo-gift-list"></div>
+      <div class="csel-bar"><div class="csel-name empty" id="combo-sel-label">Ничего не выбрано</div></div>
+    </div>
+  </div>
+
+  <div style="padding:0 16px;margin-top:14px">
+    <div style="font-size:13px;color:var(--hint);margin-bottom:6px">🎯 Фильтры</div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;padding:6px 0">
+      <input type="checkbox" id="combo-girls" style="width:18px;height:18px;accent-color:var(--accent)">
+      <span>👩 Только девушки (AI)</span>
+    </label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;padding:6px 0">
+      <input type="checkbox" id="combo-orig" style="width:18px;height:18px;accent-color:var(--accent)">
+      <span>🆕 Никогда не передавались</span>
+    </label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;padding:6px 0">
+      <input type="checkbox" id="combo-market" style="width:18px;height:18px;accent-color:var(--accent)">
+      <span>🛒 Только на маркете (за ⭐)</span>
+    </label>
+  </div>
+
+  <div style="padding:0 16px;margin-top:10px">
+    <div style="font-size:13px;color:var(--hint);margin-bottom:6px">🌍 Страна владельца</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <button class="cfilt combo-cf active" data-country="all" onclick="setComboCountry(this)">🌍 Любая</button>
+      <button class="cfilt combo-cf" data-country="cn" onclick="setComboCountry(this)">🇨🇳 Китай</button>
+      <button class="cfilt combo-cf" data-country="ru" onclick="setComboCountry(this)">🇷🇺 Россия</button>
+      <button class="cfilt combo-cf" data-country="uz" onclick="setComboCountry(this)">🇺🇿 Узбекистан</button>
+      <button class="cfilt combo-cf" data-country="kz" onclick="setComboCountry(this)">🇰🇿 Казахстан</button>
+      <button class="cfilt combo-cf" data-country="kg" onclick="setComboCountry(this)">🇰🇬 Киргизия</button>
+      <button class="cfilt combo-cf" data-country="tj" onclick="setComboCountry(this)">🇹🇯 Таджикистан</button>
+      <button class="cfilt combo-cf" data-country="in" onclick="setComboCountry(this)">🇮🇳 Индия</button>
+      <button class="cfilt combo-cf" data-country="ar" onclick="setComboCountry(this)">🇸🇦 Арабы</button>
+      <button class="cfilt combo-cf" data-country="id" onclick="setComboCountry(this)">🇮🇩 Индонезия</button>
+      <button class="cfilt combo-cf" data-country="jp" onclick="setComboCountry(this)">🇯🇵 Япония</button>
+      <button class="cfilt combo-cf" data-country="kr" onclick="setComboCountry(this)">🇰🇷 Корея</button>
+      <button class="cfilt combo-cf" data-country="tr" onclick="setComboCountry(this)">🇹🇷 Турция</button>
+    </div>
+  </div>
+
+  <div class="confirm-wrap">
+    <button class="confirm-btn" onclick="runCombo()">
+      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Искать
+    </button>
+  </div>
+</div>
 
 <!-- ====== SUB-PAGE: COUNTRY PICKER ====== -->
 <div class="subpg" id="sub-country-pick">
@@ -720,6 +790,7 @@ function openSub(name){
     if(listEl)renderSubGifts(listEl,searchEl?.value||'');
     const label=el.querySelector('.sub-sel-label');
     if(label)updateSelLabel(label);
+    if(name==='combo')renderComboGifts(document.getElementById('combo-gift-search')?.value||'');
   }
   if(tg)tg.HapticFeedback?.impactOccurred('light');
 }
@@ -877,6 +948,77 @@ function sendNonUpgraded(gift){
   if(tg)tg.HapticFeedback?.impactOccurred('medium');
   deepLink('nonupgraded__'+toApiName(gift));
 }
+
+// === COMBO SEARCH ===
+const COMBO_MAX=6;
+let comboGifts=[];          // display names
+let comboCountry='all';
+
+function renderComboGifts(filter){
+  const el=document.getElementById('combo-gift-list');
+  if(!el)return;
+  const f=(filter||'').toLowerCase();
+  const filtered=GIFTS.map((g,i)=>({name:g,i})).filter(x=>!f||x.name.toLowerCase().includes(f));
+  el.innerHTML=filtered.map(x=>`
+    <div class="crow${comboGifts.includes(x.name)?' sel':''}" onclick="toggleComboGift('${x.name.replace(/'/g,"\\'")}')">
+      <div class="cname">${x.name}</div>
+      <div class="cnum">#${x.i+1}</div>
+      <div class="ccheck"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    </div>`).join('');
+  if(!filtered.length) el.innerHTML='<div style="padding:16px;text-align:center;color:var(--t3);font-size:13px">Ничего не найдено</div>';
+  updateComboLabel();
+}
+
+function updateComboLabel(){
+  const el=document.getElementById('combo-sel-label');
+  if(!el)return;
+  if(comboGifts.length){el.textContent='✓ Выбрано: '+comboGifts.length+' ('+comboGifts.join(', ')+')';el.classList.remove('empty');}
+  else{el.textContent='Ничего не выбрано';el.classList.add('empty');}
+}
+
+function toggleComboGift(name){
+  const idx=comboGifts.indexOf(name);
+  if(idx>=0){comboGifts.splice(idx,1);}
+  else{
+    if(comboGifts.length>=COMBO_MAX){showToast('⚠ Максимум '+COMBO_MAX+' коллекций');if(tg)tg.HapticFeedback?.notificationOccurred('warning');return;}
+    comboGifts.push(name);
+  }
+  renderComboGifts(document.getElementById('combo-gift-search').value);
+  if(tg)tg.HapticFeedback?.impactOccurred('light');
+}
+
+function setComboCountry(btn){
+  document.querySelectorAll('.combo-cf').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  comboCountry=btn.dataset.country;
+  if(tg)tg.HapticFeedback?.selectionChanged();
+}
+
+function resetCombo(){
+  comboGifts=[];comboCountry='all';
+  ['combo-girls','combo-orig','combo-market'].forEach(id=>{const c=document.getElementById(id);if(c)c.checked=false;});
+  document.querySelectorAll('.combo-cf').forEach(b=>b.classList.toggle('active',b.dataset.country==='all'));
+  const s=document.getElementById('combo-gift-search');if(s)s.value='';
+  renderComboGifts('');
+}
+
+function runCombo(){
+  if(!comboGifts.length){showToast('⚠ Выбери хотя бы одну коллекцию');if(tg)tg.HapticFeedback?.notificationOccurred('warning');return;}
+  let flags='';
+  if(document.getElementById('combo-girls').checked)flags+='g';
+  if(document.getElementById('combo-orig').checked)flags+='o';
+  if(document.getElementById('combo-market').checked)flags+='m';
+  if(!flags)flags='0';
+  const cc=comboCountry==='all'?'xx':comboCountry;
+  const giftStr=comboGifts.map(toApiName).join('-');
+  const param='combo__'+cc+'_'+flags+'__'+giftStr;
+  if(param.length>64){showToast('⚠ Слишком много коллекций — убери пару');if(tg)tg.HapticFeedback?.notificationOccurred('warning');return;}
+  if(tg)tg.HapticFeedback?.impactOccurred('heavy');
+  deepLink(param);
+}
+
+const _comboSearchInp=document.getElementById('combo-gift-search');
+if(_comboSearchInp)_comboSearchInp.addEventListener('input',e=>renderComboGifts(e.target.value));
 
 let tt;
 function showToast(t){
