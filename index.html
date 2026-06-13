@@ -356,10 +356,13 @@ body{
       </div>
       <div class="acard" onclick="sendAction('nft_usernames')">
         <div class="aico v5"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M16 3h5v5"/><path d="m21 3-5 5"/></svg></div>
-        <div class="atxt"><div class="at">NFT юзернеймы</div><div class="ad">Проверь юзернеймы на Fragment — найди владельцев и кошельки</div></div>
+        <div class="atxt"><div class="at">NFT юзернеймы</div><div class="ad">Автопоиск NFT юзернеймов из TON блокчейна — кошельки и владельцы</div></div>
         <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
     </div>
+
+    <div class="stitle" style="margin-top:24px"><svg viewBox="0 0 24 24"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>Неулучшенные подарки</div>
+    <div class="action-row" id="non-upgraded-section"></div>
 
     <div class="stitle" style="margin-top:24px"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Управление</div>
     <div class="acard" onclick="sendAction('reset_viewed')">
@@ -783,6 +786,25 @@ function sendAction(action){
   if(!selectedGift)return;
   const safeAction=action.replace(/_/g,'');
   deepLink(safeAction+'__'+toApiName(selectedGift));
+}
+
+// Неулучшенные подарки — популярные коллекции
+(function(){
+  const popular=['Plush Pepe','Durov','Homunculus','Jelly Bunny','Perfume Bottle','Vintage Cigar','Sakura Flower','Electric Skull','Diamond Ring','Signet Ring','Love Potion','Astral Shard','Hypno Lollipop','Mad Pumpkin','Crystal Ball','Genie Lamp','Trapped Heart'];
+  const sec=document.getElementById('non-upgraded-section');
+  if(!sec)return;
+  sec.innerHTML=popular.map(g=>{
+    const safe=g.replace(/'/g,"\\'");
+    return `<div class="acard" onclick="sendNonUpgraded('${safe}')">
+      <div class="aico v6"><svg viewBox="0 0 24 24"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
+      <div class="atxt"><div class="at">${g}</div><div class="ad">Найти владельцев неулучшенных</div></div>
+      <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </div>`;
+  }).join('');
+})();
+function sendNonUpgraded(gift){
+  if(tg)tg.HapticFeedback?.impactOccurred('medium');
+  deepLink('nonupgraded__'+toApiName(gift));
 }
 
 let tt;
