@@ -320,14 +320,9 @@ body{
     <div class="stitle"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Поиск по типу владельца</div>
 
     <div class="action-row">
-      <div class="acard" onclick="confirmAction('chinese')">
-        <div class="aico v1"><svg viewBox="0 0 24 24"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 0 1 6.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg></div>
-        <div class="atxt"><div class="at">Найти китайцев</div><div class="ad">Владельцы с иероглифами в имени — потенциальные продавцы</div></div>
-        <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </div>
-      <div class="acard" onclick="confirmAction('russian')">
-        <div class="aico v5"><svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h6m-2 18V3m0 0h6a4 4 0 0 1 0 8h-6m6 0 4 10"/></svg></div>
-        <div class="atxt"><div class="at">Найти русских</div><div class="ad">Кириллица в имени — русскоязычные владельцы NFT</div></div>
+      <div class="acard" onclick="openSub('country-pick')">
+        <div class="aico v1"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <div class="atxt"><div class="at">🌍 По стране</div><div class="ad">Поиск владельцев по национальности (12 стран)</div></div>
         <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
       <div class="acard" onclick="confirmAction('girls')">
@@ -399,6 +394,26 @@ body{
 
 </div><!-- /scroll -->
 
+<!-- ====== SUB-PAGE: COUNTRY PICKER ====== -->
+<div class="subpg" id="sub-country-pick">
+  <div class="back-btn" onclick="closeSub()">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Назад
+  </div>
+  <div class="hdr" style="padding-top:4px"><h1>🌍 По стране</h1><p>Выберите страну владельца</p></div>
+  <div class="action-row" style="margin-top:14px;padding:0 16px" id="country-cards"></div>
+</div>
+
+<!-- ====== SUB-PAGE: MARKET COUNTRY PICKER ====== -->
+<div class="subpg" id="sub-market-country">
+  <div class="back-btn" onclick="closeSub()">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Назад
+  </div>
+  <div class="hdr" style="padding-top:4px"><h1>🌍 Маркет: по стране</h1><p>Подарки от выбранной страны за ⭐ звёзды</p></div>
+  <div class="action-row" style="margin-top:14px;padding:0 16px" id="market-country-cards"></div>
+</div>
+
 <!-- ====== SUB-PAGE: CONFIRM ====== -->
 <div class="subpg" id="sub-confirm">
   <div class="back-btn" onclick="closeSub()">
@@ -421,10 +436,20 @@ body{
   <!-- Country sub-filter (visible for girls/cooldown/random) -->
   <div id="confirm-country-wrap" style="display:none;margin:12px 16px 0">
     <div style="font-size:13px;color:var(--hint);margin-bottom:6px">Национальность</div>
-    <div style="display:flex;gap:6px">
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
       <button class="cfilt active" data-country="all" onclick="setCountry(this)">🌍 Все</button>
       <button class="cfilt" data-country="cn" onclick="setCountry(this)">🇨🇳 Китай</button>
       <button class="cfilt" data-country="ru" onclick="setCountry(this)">🇷🇺 Россия</button>
+      <button class="cfilt" data-country="uz" onclick="setCountry(this)">🇺🇿 Узбекистан</button>
+      <button class="cfilt" data-country="kz" onclick="setCountry(this)">🇰🇿 Казахстан</button>
+      <button class="cfilt" data-country="kg" onclick="setCountry(this)">🇰🇬 Киргизия</button>
+      <button class="cfilt" data-country="tj" onclick="setCountry(this)">🇹🇯 Таджикистан</button>
+      <button class="cfilt" data-country="in" onclick="setCountry(this)">🇮🇳 Индия</button>
+      <button class="cfilt" data-country="ar" onclick="setCountry(this)">🇸🇦 Арабы</button>
+      <button class="cfilt" data-country="id" onclick="setCountry(this)">🇮🇩 Индонезия</button>
+      <button class="cfilt" data-country="jp" onclick="setCountry(this)">🇯🇵 Япония</button>
+      <button class="cfilt" data-country="kr" onclick="setCountry(this)">🇰🇷 Корея</button>
+      <button class="cfilt" data-country="tr" onclick="setCountry(this)">🇹🇷 Турция</button>
     </div>
   </div>
 
@@ -513,14 +538,9 @@ body{
   <div class="stitle"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Фильтр маркета</div>
 
   <div class="action-row">
-    <div class="acard" onclick="confirmAction('market_chinese')">
-      <div class="aico v1"><svg viewBox="0 0 24 24"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 0 1 6.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg></div>
-      <div class="atxt"><div class="at">Китайцы на маркете</div><div class="ad">Подарки от китайцев за ⭐ звёзды</div></div>
-      <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-    </div>
-    <div class="acard" onclick="confirmAction('market_russian')">
-      <div class="aico v5"><svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h6m-2 18V3m0 0h6a4 4 0 0 1 0 8h-6m6 0 4 10"/></svg></div>
-      <div class="atxt"><div class="at">Русские на маркете</div><div class="ad">Русские, продающие подарки за ⭐ звёзды</div></div>
+    <div class="acard" onclick="openSub('market-country')">
+      <div class="aico v1"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+      <div class="atxt"><div class="at">🌍 По стране</div><div class="ad">Подарки от выбранной страны за ⭐ звёзды</div></div>
       <div class="arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
     </div>
     <div class="acard" onclick="confirmAction('market_all')">
@@ -563,33 +583,57 @@ const GIFTS=["Artisan Brick","Astral Shard","B-Day Candle","Berry Box","Big Year
 let selectedGift=null;
 let pendingAction=null;
 
+// Country data
+const COUNTRIES=[
+  {code:'cn',flag:'🇨🇳',name:'Китай',desc:'Иероглифы в имени'},
+  {code:'ru',flag:'🇷🇺',name:'Россия',desc:'Кириллица в имени'},
+  {code:'uz',flag:'🇺🇿',name:'Узбекистан',desc:'Узбекские имена'},
+  {code:'kz',flag:'🇰🇿',name:'Казахстан',desc:'Казахские имена'},
+  {code:'kg',flag:'🇰🇬',name:'Киргизия',desc:'Киргизские имена'},
+  {code:'tj',flag:'🇹🇯',name:'Таджикистан',desc:'Таджикские имена'},
+  {code:'in',flag:'🇮🇳',name:'Индия',desc:'Индийские скрипты и имена'},
+  {code:'ar',flag:'🇸🇦',name:'Арабы',desc:'Арабское письмо'},
+  {code:'id',flag:'🇮🇩',name:'Индонезия',desc:'Индонезийские имена'},
+  {code:'jp',flag:'🇯🇵',name:'Япония',desc:'Хирагана / катакана'},
+  {code:'kr',flag:'🇰🇷',name:'Корея',desc:'Хангыль в имени'},
+  {code:'tr',flag:'🇹🇷',name:'Турция',desc:'Турецкие имена'},
+];
+
+// Build action labels/descs dynamically
 const ACTION_LABELS={
-  chinese:'🇨🇳 Поиск китайцев',
-  russian:'🇷🇺 Поиск русских',
   girls:'👩 AI-поиск девушек',
   random:'🎲 Случайный поиск',
   original:'🔗 Оригинальные владельцы',
-  market_chinese:'🇨🇳 Маркет: китайцы',
-  market_russian:'🇷🇺 Маркет: русские',
   market_all:'🛒 Маркет: все лоты',
   cd_free:'✅ Без кулдауна',
   cd_soon:'⏳ Скоро снятие КД',
   cd_active:'🔴 На кулдауне',
 };
-
 const ACTION_DESCS={
-  chinese:'Бот найдёт всех владельцев с китайскими иероглифами в имени',
-  russian:'Бот найдёт всех владельцев с кириллицей в имени',
   girls:'AI проверит имена и определит женские аккаунты',
   random:'Бот выдаст случайных владельцев из этой коллекции',
   original:'Бот найдёт подарки которые никогда не передавались',
-  market_chinese:'Подарки от китайцев, выставленные за звёзды на маркете TG',
-  market_russian:'Подарки от русских, выставленные за звёзды на маркете TG',
   market_all:'Все подарки на продаже на внутреннем маркете Telegram',
   cd_free:'Подарки у которых кулдаун уже прошёл — можно передать',
   cd_soon:'Подарки у которых кулдаун снимется через 1-2 дня',
   cd_active:'Подарки которые сейчас на кулдауне',
 };
+// Add country actions
+COUNTRIES.forEach(c=>{
+  ACTION_LABELS['country_'+c.code]=c.flag+' Поиск: '+c.name;
+  ACTION_DESCS['country_'+c.code]='Бот найдёт владельцев — '+c.desc;
+  ACTION_LABELS['market_'+c.code]=c.flag+' Маркет: '+c.name;
+  ACTION_DESCS['market_'+c.code]='Подарки от '+c.name+' за ⭐ звёзды';
+});
+// Legacy aliases
+ACTION_LABELS.chinese='🇨🇳 Поиск китайцев';
+ACTION_LABELS.russian='🇷🇺 Поиск русских';
+ACTION_LABELS.market_chinese='🇨🇳 Маркет: китайцы';
+ACTION_LABELS.market_russian='🇷🇺 Маркет: русские';
+ACTION_DESCS.chinese='Бот найдёт всех владельцев с китайскими иероглифами в имени';
+ACTION_DESCS.russian='Бот найдёт всех владельцев с кириллицей в имени';
+ACTION_DESCS.market_chinese='Подарки от китайцев, выставленные за звёзды на маркете TG';
+ACTION_DESCS.market_russian='Подарки от русских, выставленные за звёзды на маркете TG';
 
 // Main parser page gift list
 function renderGifts(filter=''){
@@ -707,6 +751,32 @@ function setCountry(btn){
   if(tg)tg.HapticFeedback?.selectionChanged();
 }
 
+// Render country picker sub-pages
+(function(){
+  const globe='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+  const arr='<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>';
+  // Regular country search cards
+  var h='';
+  COUNTRIES.forEach(c=>{
+    h+=`<div class="acard" onclick="confirmAction('country_${c.code}')">
+      <div class="aico v1">${globe}</div>
+      <div class="atxt"><div class="at">${c.flag} ${c.name}</div><div class="ad">${c.desc}</div></div>
+      <div class="arr">${arr}</div></div>`;
+  });
+  var el=document.getElementById('country-cards');
+  if(el)el.innerHTML=h;
+  // Market country cards
+  var mh='';
+  COUNTRIES.forEach(c=>{
+    mh+=`<div class="acard" onclick="confirmAction('market_${c.code}')">
+      <div class="aico v1">${globe}</div>
+      <div class="atxt"><div class="at">${c.flag} ${c.name}</div><div class="ad">Подарки от ${c.name} за ⭐ звёзды</div></div>
+      <div class="arr">${arr}</div></div>`;
+  });
+  var mel=document.getElementById('market-country-cards');
+  if(mel)mel.innerHTML=mh;
+})();
+
 // Actions that support country sub-filter
 const COUNTRY_ACTIONS=new Set(['girls','cd_free','cd_soon','cd_active','random']);
 // Actions that support "never transferred"
@@ -765,6 +835,7 @@ function doConfirmedAction(){
     suffix+='orig';
   }
 
+  // country_XX → "countryXX__Gift", market_XX → "marketXX__Gift"
   const safeAction=pendingAction.replace(/_/g,'')+suffix;
 
   if(pendingAction==='random'){
